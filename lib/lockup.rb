@@ -5,6 +5,18 @@ require 'lockup/engine'
 module Lockup
   extend ActiveSupport::Concern
 
+  included do
+    def check_for_lockup
+      return unless respond_to?(:lockup) && lockup_codeword
+      return if cookies && cookies[:lockup].present? && cookies[:lockup] == lockup_codeword.to_s.downcase
+
+      redirect_to lockup.unlock_path(
+        return_to: request.fullpath.split('?lockup_codeword')[0],
+        lockup_codeword: params[:lockup_codeword]
+      )
+    end
+  end
+
   def self.from_config(setting, secrets_or_credentials = :credentials)
     return unless Rails.application.respond_to?(secrets_or_credentials)
 
@@ -17,15 +29,6 @@ module Lockup
 
   private
 
-  def check_for_lockup
-    return unless respond_to?(:lockup) && lockup_codeword
-    return if cookies && cookies[:lockup].present? && cookies[:lockup] == lockup_codeword.to_s.downcase
-
-    redirect_to lockup.unlock_path(
-      return_to: request.fullpath.split('?lockup_codeword')[0],
-      lockup_codeword: params[:lockup_codeword]
-    )
-  end
 
   def cookie_lifetime
     @cookie_lifetime ||=
