@@ -5,14 +5,6 @@ require 'lockup/engine'
 module Lockup
   extend ActiveSupport::Concern
 
-  included do
-    if respond_to?(:before_action)
-      before_action :check_for_lockup, except: ['unlock']
-    else
-      before_filter :check_for_lockup, except: ['unlock']
-    end
-  end
-
   def self.from_config(setting, secrets_or_credentials = :credentials)
     return unless Rails.application.respond_to?(secrets_or_credentials)
 
