@@ -2,11 +2,11 @@ module Lockup
   class LockupController < Lockup::ApplicationController
     CRAWLER_REGEX = /crawl|googlebot|slurp|spider|bingbot|tracker|click|parser|spider/
 
-    if self.respond_to?(:skip_before_action)
-      skip_before_action :check_for_lockup
-    else
-      skip_before_filter :check_for_lockup
-    end
+    # if self.respond_to?(:skip_before_action)
+    #   skip_before_action :check_for_lockup
+    # else
+    #   skip_before_filter :check_for_lockup
+    # end
 
     def unlock
       if params[:lockup_codeword].present?
